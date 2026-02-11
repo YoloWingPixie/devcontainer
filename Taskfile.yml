@@ -3,10 +3,19 @@
 version: '3'
 
 vars:
-  GREETING: Hello, World!
+  CONTAINER_NAME: devcontainer
 
 tasks:
-  default:
+  default: [build, run]
+  build:
     cmds:
-      - echo "{{.GREETING}}"
+      - docker build -t {{.CONTAINER_NAME}} .
+    silent: true
+  run:
+    cmds:
+      - docker run -it {{.CONTAINER_NAME}}
+    silent: true
+  stop:
+    cmds:
+      - docker stop {{.CONTAINER_NAME}}
     silent: true
