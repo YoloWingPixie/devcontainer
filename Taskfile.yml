@@ -11,10 +11,17 @@ tasks:
     deps: [build, run]
 
   build:
+    desc: "Build image using config.yaml as source of truth for build args"
     silent: true
     cmds:
-      - docker build -t {{.CONTAINER_NAME}} .
-
+      - |
+        docker build \
+          --build-arg UBUNTU_VERSION=$(yq -r .base.ubuntu config.yaml) \
+          --build-arg USERNAME=$(yq -r .user.name config.yaml) \
+          --build-arg USER_UID=$(yq -r .user.uid config.yaml) \
+          --build-arg USER_GID=$(yq -r .user.gid config.yaml) \
+          -t {{.CONTAINER_NAME}} \
+          .
   run:
     silent: true
     cmds:

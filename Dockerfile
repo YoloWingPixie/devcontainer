@@ -1,7 +1,8 @@
-ARG UBUNTU_VERSION=24.04
-
+# Build args: default to config.yaml values; override via task build or docker build --build-arg
+ARG UBUNTU_VERSION=22.04
 FROM ubuntu:${UBUNTU_VERSION}
 
+ARG UBUNTU_VERSION=22.04
 ARG USERNAME=yolowingpixie
 ARG USER_UID=1001
 ARG USER_GID=1000
