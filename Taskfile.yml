@@ -8,7 +8,9 @@ vars:
 
 tasks:
   default:
-    deps: [build, run]
+    cmds:
+      - task: build
+      - task: run
 
   build:
     desc: "Build image"
