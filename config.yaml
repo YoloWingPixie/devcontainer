@@ -5,7 +5,7 @@ versions:
   terraform: "1.14.4"
   azure-cli: "latest"
   aws_cli: "latest"
-  kubectl: "latest"
+  kubectl: "stable"
   python: "3.12"
   node: "25.6.1"
   go: "1.26.0"

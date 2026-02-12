@@ -7,6 +7,8 @@ ARG USERNAME=yolowingpixie
 ARG USER_UID=1001
 ARG USER_GID=1000
 
+ARG KUBECTL_VERSION=stable
+
 LABEL description="Generic development container for my personal projects"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -45,6 +47,14 @@ RUN uv tool install ty@latest
 RUN useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# Install kubectl
+RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"; \
+    else \
+    curl -LO "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"; \
+    fi && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 # Set user
 USER $USERNAME
