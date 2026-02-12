@@ -1,0 +1,22 @@
+base:
+  ubuntu: "22.04"
+
+versions:
+  terraform: "1.14.4"
+  azure-cli: "latest"
+  aws_cli: "latest"
+  kubectl: "latest"
+  python: "3.12"
+  node: "25.6.1"
+  go: "1.26.0"
+
+user:
+  name: "yolowingpixie"
+  uid: 1001
+  gid: 1000
+
+global_python_packages:
+  - ruff
+  - ty
+  - boto3
+  - pytest
