@@ -7,8 +7,6 @@ ARG USERNAME=yolowingpixie
 ARG USER_UID=1001
 ARG USER_GID=1000
 
-ARG KUBECTL_VERSION=stable
-
 LABEL description="Generic development container for my personal projects"
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -28,15 +26,18 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     sudo \
     software-properties-common \
+    bash-completion \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Python
 ARG PYTHON_VERSION=3.12
+ARG PYTHON_MAJOR_VERSION=${PYTHON_VERSION%%.*}
+
 RUN apt-get update && apt-get install -y \
-    python${PYTHON_VERSION} \
-    python${PYTHON_VERSION}-pip \
-    python${PYTHON_VERSION}-venv \
-    && ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
+    python${PYTHON_MAJOR_VERSION} \
+    python${PYTHON_MAJOR_VERSION}-pip \
+    python${PYTHON_MAJOR_VERSION}-venv \
+    && ln -s /usr/bin/python${PYTHON_MAJOR_VERSION} /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
 
 # Ruff, uv, and ty
@@ -46,6 +47,8 @@ RUN uv tool install ruff@latest
 RUN uv tool install ty@latest
 
 # Install kubectl
+ARG KUBECTL_VERSION=stable
+
 RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"; \
     else \
@@ -54,6 +57,8 @@ RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 # Install terraform
+ARG TERRAFORM_VERSION=latest
+
 RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
     gpg --dearmor | \
     tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
@@ -78,5 +83,8 @@ WORKDIR /home/$USERNAME
 # Profile setup
 RUN touch ~/.bashrc
 RUN terraform -install-autocomplete
+RUN echo 'source <(kubectl completion bash)' >>~/.bashrc
+RUN echo 'alias k=kubectl' >>~/.bashrc && \
+    echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
 
 CMD ["/bin/bash"]
