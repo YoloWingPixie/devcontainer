@@ -11,19 +11,12 @@ tasks:
     deps: [build, run]
 
   build:
-    desc: "Build image using config.yaml as source of truth for build args"
+    desc: "Build image"
     silent: true
     cmds:
       - |
         docker build \
           --build-arg UBUNTU_VERSION=$(yq -r .base.ubuntu config.yaml) \
-          --build-arg USERNAME=$(yq -r .user.name config.yaml) \
-          --build-arg USER_UID=$(yq -r .user.uid config.yaml) \
-          --build-arg USER_GID=$(yq -r .user.gid config.yaml) \
-          --build-arg KUBECTL_VERSION=$(yq -r .versions.kubectl config.yaml) \
-          --build-arg TERRAFORM_VERSION=$(yq -r .versions.terraform config.yaml) \
-          --build-arg PYTHON_VERSION=$(yq -r .versions.python config.yaml) \
-          --build-arg HELM_VERSION=$(yq -r .versions.helm config.yaml) \
           -t {{.CONTAINER_NAME}} \
           .
   run:

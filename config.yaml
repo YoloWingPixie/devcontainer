@@ -16,6 +16,26 @@ user:
   uid: 1001
   gid: 1000
 
+apt_packages:
+  - sudo
+  - build-essential
+  - curl
+  - wget
+  - git
+  - vim
+  - nano
+  - neovim
+  - unzip
+  - jq
+  - yq
+  - ca-certificates
+  - gnupg
+  - gpg
+  - apt-transport-https
+  - lsb-release
+  - software-properties-common
+  - bash-completion
+
 global_python_packages:
   - ruff
   - ty
