@@ -30,12 +30,13 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Python 3.12
+# Python
+ARG PYTHON_VERSION=3.12
 RUN apt-get update && apt-get install -y \
-    python3.12 \
-    python3-pip \
-    python3-venv \
-    && ln -s /usr/bin/python3.12 /usr/bin/python \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-pip \
+    python${PYTHON_VERSION}-venv \
+    && ln -s /usr/bin/python${PYTHON_VERSION} /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
 
 # Ruff, uv, and ty
