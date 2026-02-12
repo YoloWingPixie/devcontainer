@@ -1,8 +1,8 @@
 # Build args: default to config.yaml values; override via task build or docker build --build-arg
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION}
 
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=24.04
 ARG USERNAME=yolowingpixie
 ARG USER_UID=1001
 ARG USER_GID=1000
@@ -27,7 +27,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Python 3.13
+# Python 3.12
 RUN apt-get update && apt-get install -y \
     python3.12 \
     python3-pip \
