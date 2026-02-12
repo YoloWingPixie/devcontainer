@@ -7,6 +7,7 @@ versions:
   aws_cli: "latest"
   kubectl: "stable"
   helm: "latest"
+  docker: "latest"
   python: "3.12"
   node: "25.6.1"
   go: "1.26.0"
