@@ -82,6 +82,9 @@ WORKDIR /home/$USERNAME
 
 # Profile setup
 RUN touch ~/.bashrc
+COPY --chown=$USERNAME:$USERNAME --chmod=755 scripts/alias.sh alias.sh
+RUN echo 'source $HOME/alias.sh' >>~/.bashrc
+
 RUN terraform -install-autocomplete
 RUN echo 'source <(kubectl completion bash)' >>~/.bashrc
 RUN echo 'alias k=kubectl' >>~/.bashrc && \
