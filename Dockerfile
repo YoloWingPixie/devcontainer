@@ -1,6 +1,7 @@
 # Build args: default to config.yaml values; override via task build or docker build --build-arg
 ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION}
+COPY config.yaml /tmp/devcontainer/config.yaml
 
 ARG UBUNTU_VERSION=24.04
 ARG USERNAME=yolowingpixie
@@ -12,6 +13,9 @@ LABEL description="Generic development container for my personal projects"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
+    sudo
+
+RUN sudo apt-get update && apt-get install -y \
     build-essential \
     curl \
     wget \
@@ -21,10 +25,13 @@ RUN apt-get update && apt-get install -y \
     neovim \
     unzip \
     jq \
+    yq \
     ca-certificates \
     gnupg \
-    lsb-release \
+    gpg \
     sudo \
+    apt-transport-https \
+    lsb-release \
     software-properties-common \
     bash-completion \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -40,12 +47,6 @@ RUN apt-get update && apt-get install -y \
     && ln -s /usr/bin/python${PYTHON_MAJOR_VERSION} /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
 
-# Ruff, uv, and ty
-RUN curl -LsSf https://astral.sh/uv/install.sh | env UV_INSTALL_DIR=/usr/local/bin sh
-ENV UV_TOOL_BIN_DIR=/usr/local/bin
-RUN uv tool install ruff@latest
-RUN uv tool install ty@latest
-
 # Install kubectl
 ARG KUBECTL_VERSION=stable
 
@@ -55,6 +56,17 @@ RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
     curl -LO "https://dl.k8s.io/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl"; \
     fi && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Install helm
+ARG HELM_VERSION=latest
+RUN curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null && \
+    echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list && \
+    sudo apt-get update
+RUN if [ "$HELM_VERSION" = "latest" ]; then \
+    apt update && apt-get install helm; \
+    else \
+    apt update && apt-get install helm=$HELM_VERSION; \
+    fi
 
 # Install terraform
 ARG TERRAFORM_VERSION=latest
@@ -81,6 +93,12 @@ USER $USERNAME
 WORKDIR /home/$USERNAME
 
 # Profile setup
+
+# install uv
+ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN for pkg in $(yq -r '.global_python_packages[]' /tmp/devcontainer/config.yaml); do uv tool install $pkg; done
+
 RUN touch ~/.bashrc
 COPY --chown=$USERNAME:$USERNAME --chmod=755 scripts/alias.sh alias.sh
 RUN echo 'source $HOME/alias.sh' >>~/.bashrc

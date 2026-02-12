@@ -6,6 +6,7 @@ versions:
   azure-cli: "latest"
   aws_cli: "latest"
   kubectl: "stable"
+  helm: "latest"
   python: "3.12"
   node: "25.6.1"
   go: "1.26.0"
@@ -18,5 +19,4 @@ user:
 global_python_packages:
   - ruff
   - ty
-  - boto3
   - pytest
