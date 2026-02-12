@@ -4,18 +4,88 @@ version: '3'
 
 vars:
   CONTAINER_NAME: devcontainer
+  DEPS: [yq]
 
 tasks:
-  default: [build, run]
+  default:
+    deps: [build, run]
+
   build:
+    silent: true
     cmds:
       - docker build -t {{.CONTAINER_NAME}} .
-    silent: true
+
   run:
+    silent: true
     cmds:
       - docker run -it {{.CONTAINER_NAME}}
-    silent: true
+
   stop:
+    silent: true
     cmds:
       - docker stop {{.CONTAINER_NAME}}
-    silent: true
+
+  setup:
+    desc: "Setup missing dependencies via appropriate package manager for each platform"
+    cmds:
+      - task: setup:{{OS}}
+
+  setup:windows:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - task: ensure-scoop
+      - for: {var: DEPS}
+        task: install-if-missing:windows
+        vars:
+          PACKAGE: '{{.ITEM}}'
+
+  setup:darwin:
+    internal: true
+    platforms: [darwin]
+    cmds:
+      - task: ensure-brew
+      - for: {var: DEPS}
+        task: install-if-missing:darwin
+        vars:
+          PACKAGE: '{{.ITEM}}'
+
+  install-if-missing:darwin:
+    internal: true
+    platforms: [darwin]
+    label: 'install-{{.PACKAGE}}'
+    status:
+      - which {{.PACKAGE}}
+    cmds:
+      - echo "Installing {{.PACKAGE}} via brew..."
+      - brew install {{.PACKAGE}}
+
+  install-if-missing:windows:
+    internal: true
+    platforms: [windows]
+    label: 'install-{{.PACKAGE}}'
+    status:
+      - Get-Command {{.PACKAGE}}
+    cmds:
+      - echo "Installing {{.PACKAGE}} via scoop..."
+      - scoop install {{.PACKAGE}}
+
+  ensure-scoop:
+    internal: true
+    platforms: [windows]
+    status:
+      - scoop --version
+    cmds:
+      - echo "Installing scoop..."
+      - Invoke-WebRequest -UseBasicParsing get.scoop.sh | Invoke-Expression
+      - scoop update
+
+  ensure-brew:
+    internal: true
+    platforms: [darwin]
+    status:
+      - brew --version
+    cmds:
+      - echo "Installing brew..."
+      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      - brew update
