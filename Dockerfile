@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release \
     sudo \
+    software-properties-common \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Python 3.12
@@ -43,11 +44,6 @@ ENV UV_TOOL_BIN_DIR=/usr/local/bin
 RUN uv tool install ruff@latest
 RUN uv tool install ty@latest
 
-# Create user
-RUN useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME
-
 # Install kubectl
 RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"; \
@@ -56,8 +52,30 @@ RUN if [ "$KUBECTL_VERSION" = "stable" ]; then \
     fi && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
+# Install terraform
+RUN wget -O- https://apt.releases.hashicorp.com/gpg | \
+    gpg --dearmor | \
+    tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+
+RUN if [ "$TERRAFORM_VERSION" = "latest" ]; then \ 
+    apt update && apt-get install terraform; \
+    else \
+    apt update && apt-get install terraform=$TERRAFORM_VERSION; \
+    fi
+
+# Create user
+RUN useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
 # Set user
 USER $USERNAME
 WORKDIR /home/$USERNAME
+
+# Profile setup
+RUN touch ~/.bashrc
+RUN terraform -install-autocomplete
 
 CMD ["/bin/bash"]

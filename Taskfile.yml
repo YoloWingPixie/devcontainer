@@ -21,6 +21,7 @@ tasks:
           --build-arg USER_UID=$(yq -r .user.uid config.yaml) \
           --build-arg USER_GID=$(yq -r .user.gid config.yaml) \
           --build-arg KUBECTL_VERSION=$(yq -r .versions.kubectl config.yaml) \
+          --build-arg TERRAFORM_VERSION=$(yq -r .versions.terraform config.yaml) \
           -t {{.CONTAINER_NAME}} \
           .
   run:

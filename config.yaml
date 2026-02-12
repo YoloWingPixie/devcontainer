@@ -2,7 +2,7 @@ base:
   ubuntu: "24.04"
 
 versions:
-  terraform: "1.14.4"
+  terraform: "latest"
   azure-cli: "latest"
   aws_cli: "latest"
   kubectl: "stable"
