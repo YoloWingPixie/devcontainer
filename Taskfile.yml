@@ -3,6 +3,7 @@
 version: '3'
 
 vars:
+  DOCKER_USERNAME: yolowingpixie
   CONTAINER_NAME: devcontainer
   DEPS: [yq]
 
@@ -10,10 +11,12 @@ tasks:
   default:
     cmds:
       - task: build
+      - task: docker:tag:dev-latest
       - task: run
 
   build:
     desc: "Build image"
+    aliases: [docker:build]
     silent: true
     cmds:
       - |
@@ -22,9 +25,23 @@ tasks:
           -t {{.CONTAINER_NAME}} \
           .
   run:
+    desc: "Run container"
+    aliases: [docker:run]
     silent: true
     cmds:
       - docker run -it {{.CONTAINER_NAME}}
+
+  docker:tag:dev-latest:
+    desc: "Tag image"
+    silent: true
+    cmds:
+      - docker tag {{.CONTAINER_NAME}} {{.DOCKER_USERNAME}}/{{.CONTAINER_NAME}}:dev-latest
+
+  docker:push:
+    desc: "Push image"
+    silent: true
+    cmds:
+      - docker push {{.DOCKER_USERNAME}}/{{.CONTAINER_NAME}}
 
   stop:
     silent: true
