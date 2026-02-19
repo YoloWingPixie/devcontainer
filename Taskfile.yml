@@ -25,11 +25,26 @@ tasks:
           -t {{.CONTAINER_NAME}} \
           .
   run:
-    desc: "Run container"
+    desc: "Run container with Docker socket mounted (platform-specific)"
     aliases: [docker:run]
+    cmds:
+      - task: run:{{OS}}
+
+  run:darwin:
+    internal: true
+    desc: "Run container on macOS"
+    platforms: [darwin]
     silent: true
     cmds:
-      - docker run -it {{.CONTAINER_NAME}}
+      - docker run -it -v /var/run/docker.sock:/var/run/docker.sock {{.CONTAINER_NAME}}
+
+  run:windows:
+    internal: true
+    desc: "Run container on Windows (Docker Desktop)"
+    platforms: [windows]
+    silent: true
+    cmds:
+      - docker run -it --privileged -v //var/run/docker.sock:/var/run/docker.sock {{.CONTAINER_NAME}}
 
   docker:tag:dev-latest:
     desc: "Tag image"

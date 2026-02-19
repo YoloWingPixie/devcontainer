@@ -17,6 +17,9 @@ user:
   uid: 1001
   gid: 1000
 
+docker:
+  group_gid: 1001
+
 apt_packages:
   - sudo
   - build-essential

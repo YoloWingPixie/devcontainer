@@ -3,6 +3,7 @@ ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION}
 
 COPY config.yaml /tmp/devcontainer/config.yaml
+COPY --chmod=755 scripts/entrypoint.sh /entrypoint.sh
 ENV CONFIG_FILE=/tmp/devcontainer/config.yaml
 
 ARG USERNAME=yolowingpixie
@@ -85,15 +86,12 @@ RUN DOCKER_VERSION=$(yq -r '.versions.docker' $CONFIG_FILE) && \
 RUN USER_UID=$(yq -r '.user.uid' $CONFIG_FILE) && \
     USER_GID=$(yq -r '.user.gid' $CONFIG_FILE) && \
     useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && usermod -aG docker $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
-# Set user
+# Profile setup
 USER $USERNAME
 WORKDIR /home/$USERNAME
-
-# Profile setup
 
 # install uv
 ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
@@ -109,4 +107,9 @@ RUN echo 'source <(kubectl completion bash)' >>~/.bashrc
 RUN echo 'alias k=kubectl' >>~/.bashrc && \
     echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
 
+# Copy scripts
+COPY --chmod=755 scripts/*.sh /usr/local/bin/
+
+WORKDIR /home/$USERNAME
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash"]
