@@ -6,6 +6,9 @@ vars:
   DOCKER_USERNAME: yolowingpixie
   CONTAINER_NAME: devcontainer
   DEPS: [yq]
+  WSL_DISTRO: DevContainer
+  WSL_DIR: C:\WSL\DevContainer
+  TAR_FILE: devcontainer.tar
 
 tasks:
   default:
@@ -51,6 +54,48 @@ tasks:
     silent: true
     cmds:
       - docker tag {{.CONTAINER_NAME}} {{.DOCKER_USERNAME}}/{{.CONTAINER_NAME}}:dev-latest
+
+  wsl:install:
+    desc: "Build image and (re)import into WSL, replacing any existing distro"
+    aliases: [wsl]
+    platforms: [windows]
+    cmds:
+      - task: build
+      - task: docker:tag:dev-latest
+      - task: wsl:unregister
+      - task: wsl:export
+      - task: wsl:import
+      - wsl --set-default {{.WSL_DISTRO}}
+      - wsl -d {{.WSL_DISTRO}}
+
+  wsl:unregister:
+    internal: true
+    platforms: [windows]
+    ignore_error: true
+    cmds:
+      - wsl --unregister {{.WSL_DISTRO}}
+
+  wsl:export:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - docker create --name tmp-export {{.DOCKER_USERNAME}}/{{.CONTAINER_NAME}}:dev-latest
+      - docker export tmp-export -o {{.TAR_FILE}}
+      - docker rm tmp-export
+
+  wsl:import:
+    internal: true
+    platforms: [windows]
+    cmds:
+      - task: wsl:mkdir
+      - wsl --import {{.WSL_DISTRO}} "{{.WSL_DIR}}" {{.TAR_FILE}}
+
+  wsl:mkdir:
+    internal: true
+    platforms: [windows]
+    ignore_error: true
+    cmds:
+      - mkdir "{{.WSL_DIR}}"
 
   docker:push:
     desc: "Push image"

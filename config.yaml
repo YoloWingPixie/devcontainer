@@ -23,7 +23,6 @@ docker:
 apt_packages:
   - apt-transport-https
   - bash-completion
-  - batcat
   - build-essential
   - ca-certificates
   - curl

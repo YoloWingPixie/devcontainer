@@ -89,6 +89,9 @@ RUN USER_UID=$(yq -r '.user.uid' $CONFIG_FILE) && \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
+# Configure WSL to use the intended user by default
+RUN printf '[user]\ndefault=%s\n' "$USERNAME" > /etc/wsl.conf
+
 # Profile setup
 USER $USERNAME
 WORKDIR /home/$USERNAME
