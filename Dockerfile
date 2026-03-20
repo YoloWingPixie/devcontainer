@@ -115,11 +115,11 @@ RUN curl -fsSL https://claude.ai/install.sh | bash
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 
 # Install Powerlevel10k as oh-my-zsh theme
-RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /home/$USERNAME/.oh-my-zsh/custom/themes/powerlevel10k
 
 # Copy zsh config
-COPY --chown=$USERNAME:$USERNAME scripts/zsh/.zshrc ~/.zshrc
-COPY --chown=$USERNAME:$USERNAME scripts/zsh/.p10k.zsh ~/.p10k.zsh
+COPY --chown=$USERNAME:$USERNAME scripts/zsh/.zshrc /home/$USERNAME/.zshrc
+COPY --chown=$USERNAME:$USERNAME scripts/zsh/.p10k.zsh /home/$USERNAME/.p10k.zsh
 
 # Copy scripts
 COPY --chmod=755 scripts/*.sh /usr/local/bin/

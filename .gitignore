@@ -1,6 +1,9 @@
 # macOS system files
 .DS_Store
 
+# WSL export
+*.tar
+
 # Backup files
 *.bak
 *.orig
