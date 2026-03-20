@@ -1,0 +1,9 @@
+# macOS system files
+.DS_Store
+
+# Backup files
+*.bak
+*.orig
+
+#IDEs
+.idea
