@@ -85,7 +85,7 @@ RUN DOCKER_VERSION=$(yq -r '.versions.docker' $CONFIG_FILE) && \
 # Create user
 RUN USER_UID=$(yq -r '.user.uid' $CONFIG_FILE) && \
     USER_GID=$(yq -r '.user.gid' $CONFIG_FILE) && \
-    useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    useradd --uid $USER_UID --gid $USER_GID --shell /bin/zsh -m $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
@@ -102,10 +102,21 @@ RUN touch ~/.bashrc
 COPY --chown=$USERNAME:$USERNAME --chmod=755 scripts/alias.sh alias.sh
 RUN echo 'source $HOME/alias.sh' >>~/.bashrc
 
-RUN terraform -install-autocomplete
-RUN echo 'source <(kubectl completion bash)' >>~/.bashrc
-RUN echo 'alias k=kubectl' >>~/.bashrc && \
-    echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
+# Exec zsh when entering via bash (interactive sessions only)
+RUN echo '[[ $- == *i* ]] && exec zsh' >>~/.bashrc
+
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash
+
+# Install oh-my-zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Install Powerlevel10k as oh-my-zsh theme
+RUN git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/powerlevel10k
+
+# Copy zsh config
+COPY --chown=$USERNAME:$USERNAME scripts/zsh/.zshrc ~/.zshrc
+COPY --chown=$USERNAME:$USERNAME scripts/zsh/.p10k.zsh ~/.p10k.zsh
 
 # Copy scripts
 COPY --chmod=755 scripts/*.sh /usr/local/bin/

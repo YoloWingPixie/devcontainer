@@ -47,6 +47,7 @@ apt_packages:
   - wget
   - yq
   - zoxide
+  - zsh
 
 global_python_packages:
   - ruff
