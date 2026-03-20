@@ -1,15 +1,13 @@
 #!/bin/bash
 set -e
 
-wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
-
 TERRAFORM_VERSION=$(yq -r '.versions.terraform' $CONFIG_FILE)
 
 if [ "$TERRAFORM_VERSION" = "latest" ]; then
-    apt-get update && apt-get install -y terraform
-else
-    apt-get update && apt-get install -y terraform=$TERRAFORM_VERSION
+    TERRAFORM_VERSION=$(curl -fsSL https://api.releases.hashicorp.com/v1/releases/terraform/latest | jq -r '.version')
 fi
 
-apt-get clean && rm -rf /var/lib/apt/lists/*
+curl -fsSL "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -o /tmp/terraform.zip
+unzip /tmp/terraform.zip -d /tmp/terraform-bin/
+install -o root -g root -m 0755 /tmp/terraform-bin/terraform /usr/local/bin/terraform
+rm -rf /tmp/terraform.zip /tmp/terraform-bin/

@@ -1,15 +1,11 @@
 #!/bin/bash
 set -e
 
-curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | tee /usr/share/keyrings/helm.gpg > /dev/null
-echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
-
 HELM_VERSION=$(yq -r '.versions.helm' $CONFIG_FILE)
 
 if [ "$HELM_VERSION" = "latest" ]; then
-    apt-get update && apt-get install -y helm
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 else
-    apt-get update && apt-get install -y helm=$HELM_VERSION
+    export DESIRED_VERSION="v${HELM_VERSION}"
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 fi
-
-apt-get clean && rm -rf /var/lib/apt/lists/*

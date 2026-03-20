@@ -12,6 +12,7 @@ COPY --chmod=755 scripts/install/user/ /tmp/install/user/
 RUN run-parts --regex '.*\.sh$' /tmp/install/user/
 
 COPY --chown=$USERNAME:$USERNAME scripts/alias.sh alias.sh
+COPY --chown=$USERNAME:$USERNAME scripts/alias/ alias/
 RUN touch ~/.bashrc && \
     echo 'source $HOME/alias.sh' >> ~/.bashrc && \
     echo '[[ $- == *i* ]] && exec zsh' >> ~/.bashrc

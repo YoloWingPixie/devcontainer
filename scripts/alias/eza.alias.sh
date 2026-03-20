@@ -1,0 +1,5 @@
+alias ls='eza --icons --group-directories-first'
+alias ll='eza -l --icons --group-directories-first --git'
+alias la='eza -la --icons --group-directories-first --git'
+alias lt='eza --tree --icons'
+alias lta='eza --tree --icons -a'
