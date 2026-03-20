@@ -21,24 +21,32 @@ docker:
   group_gid: 1001
 
 apt_packages:
-  - sudo
+  - apt-transport-https
+  - bash-completion
+  - batcat
   - build-essential
-  - curl
-  - wget
-  - git
-  - vim
-  - nano
-  - neovim
-  - unzip
-  - jq
-  - yq
   - ca-certificates
+  - curl
+  - dnsutils
+  - eza
+  - fzf
+  - git
   - gnupg
   - gpg
-  - apt-transport-https
+  - jq
   - lsb-release
+  - nano
+  - neovim
+  - postgresql-client
+  - proxychains4
+  - ripgrep
   - software-properties-common
-  - bash-completion
+  - sudo
+  - unzip
+  - vim
+  - wget
+  - yq
+  - zoxide
 
 global_python_packages:
   - ruff

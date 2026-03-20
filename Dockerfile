@@ -111,5 +111,4 @@ RUN echo 'alias k=kubectl' >>~/.bashrc && \
 COPY --chmod=755 scripts/*.sh /usr/local/bin/
 
 WORKDIR /home/$USERNAME
-ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/bin/bash"]
