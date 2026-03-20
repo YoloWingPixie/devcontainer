@@ -13,18 +13,30 @@ vars:
 tasks:
   default:
     cmds:
+      - task: build:base
       - task: build
       - task: docker:tag:dev-latest
       - task: run
 
-  build:
-    desc: "Build image"
-    aliases: [docker:build]
+  build:base:
+    desc: "Build system layer image"
     silent: true
     cmds:
       - |
         docker build \
           --build-arg UBUNTU_VERSION=$(yq -r .base.ubuntu config.yaml) \
+          -f Dockerfile.base \
+          -t {{.CONTAINER_NAME}}-base \
+          .
+
+  build:
+    desc: "Build user layer image"
+    aliases: [docker:build]
+    silent: true
+    cmds:
+      - |
+        docker build \
+          --build-arg BASE_IMAGE={{.CONTAINER_NAME}}-base \
           -t {{.CONTAINER_NAME}} \
           .
   run:

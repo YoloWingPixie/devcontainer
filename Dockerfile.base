@@ -1,0 +1,17 @@
+ARG UBUNTU_VERSION=24.04
+
+FROM ubuntu:${UBUNTU_VERSION}
+
+LABEL description="Generic development container for my personal projects - system layer"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG USERNAME=yolowingpixie
+ENV USERNAME=$USERNAME
+ENV CONFIG_FILE=/tmp/devcontainer/config.yaml
+
+COPY config.yaml /tmp/devcontainer/config.yaml
+COPY --chmod=755 scripts/entrypoint.sh /entrypoint.sh
+COPY --chmod=755 scripts/install/system/ /tmp/install/system/
+
+RUN run-parts --regex '.*\.sh$' /tmp/install/system/
