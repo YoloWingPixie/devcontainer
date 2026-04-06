@@ -48,6 +48,18 @@ apt_packages:
   - zoxide
   - zsh
 
+git:
+  username: ""
+  email: ""
+
+ssh_keys:
+  source_dir: "~/.ssh"
+  keys:
+    - filename: github_signing
+      purpose: signing
+    - filename: id_ed25519
+      purpose: authentication
+
 global_python_packages:
   - ruff
   - ty

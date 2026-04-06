@@ -85,6 +85,11 @@ source $ZSH/oh-my-zsh.sh
 
 export PATH="$HOME/.local/bin:$PATH"
 
+# Pick up shared ssh-agent socket from entrypoint
+if [ -S "$HOME/.ssh/agent.sock" ]; then
+  export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+fi
+
 source $HOME/alias.sh
 
 # Completions
