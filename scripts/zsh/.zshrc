@@ -83,7 +83,7 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.bun/bin:$HOME/.local/bin:$PATH"
 
 # Pick up shared ssh-agent socket from entrypoint
 if [ -S "$HOME/.ssh/agent.sock" ]; then

@@ -11,6 +11,7 @@ versions:
   python: "3.12"
   node: "25.6.1"
   go: "1.26.0"
+  bun: "latest"
 
 user:
   name: "yolowingpixie"

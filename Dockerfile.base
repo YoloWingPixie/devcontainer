@@ -15,3 +15,5 @@ COPY --chmod=755 scripts/entrypoint.sh /entrypoint.sh
 COPY --chmod=755 scripts/install/system/ /tmp/install/system/
 
 RUN run-parts --regex '.*\.sh$' /tmp/install/system/
+
+ENV PATH="/usr/local/go/bin:${PATH}"
