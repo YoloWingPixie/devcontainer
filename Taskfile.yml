@@ -184,3 +184,28 @@ tasks:
       - echo "Installing brew..."
       - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       - brew update
+
+  addon:codex:smoke:
+    desc: "Verify the Codex installation in the development image"
+    preconditions:
+      - sh: command -v docker
+        msg: "docker is required"
+    cmds:
+      - |
+        docker run --rm --entrypoint /bin/bash {{.CONTAINER_NAME}} -c '
+          set -euo pipefail
+          expected_version=$(yq -r .addons.codex.version "$CONFIG_FILE")
+          test "$(codex --version)" = "codex-cli ${expected_version}"
+          test "$(stat -c %a ~/.codex)" = "700"
+          test "$(stat -c %a ~/.codex/config.toml)" = "600"
+          test "$(stat -c %a ~/.codex/AGENTS.md)" = "600"
+          test ! -e ~/.codex/auth.json
+          python3 -c "from pathlib import Path; import tomllib; tomllib.loads(Path.home().joinpath(\".codex/config.toml\").read_text(encoding=\"utf-8\"))"
+        '
+
+  verify:
+    desc: "Rebuild the image and run smoke checks"
+    cmds:
+      - task: build:base
+      - task: build
+      - task: addon:codex:smoke

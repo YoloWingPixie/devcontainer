@@ -1,0 +1,11 @@
+.git
+.idea
+.tmp
+*.tar
+**/auth.json
+**/cache
+**/history.jsonl
+**/logs
+**/sessions
+**/*.sqlite
+**/*.sqlite-*
