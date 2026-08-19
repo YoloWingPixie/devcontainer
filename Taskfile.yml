@@ -105,9 +105,8 @@ tasks:
   wsl:mkdir:
     internal: true
     platforms: [windows]
-    ignore_error: true
     cmds:
-      - mkdir "{{.WSL_DIR}}"
+      - powershell -NoProfile -Command "New-Item -ItemType Directory -Force -Path '{{.WSL_DIR}}' | Out-Null"
 
   docker:push:
     desc: "Push image"
