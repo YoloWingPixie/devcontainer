@@ -11,6 +11,7 @@ ENV USERNAME=$USERNAME
 ENV CONFIG_FILE=/tmp/devcontainer/config.yaml
 
 COPY config.yaml /tmp/devcontainer/config.yaml
+COPY addons/workspace/ /tmp/addons/workspace/
 COPY --chmod=755 scripts/entrypoint.sh /entrypoint.sh
 COPY --chmod=755 scripts/install/system/ /tmp/install/system/
 

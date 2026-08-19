@@ -20,6 +20,18 @@ addons:
     installer_url: "https://chatgpt.com/codex/install.sh"
     installer_sha256: "ba92dd27e5c06f0d3bbc58bfa4b9cfb6599cd2742fbb1f92a2765e6c07dedb5a"
 
+workspace:
+  state_directory: "devcontainer-workspace"
+  tmux:
+    save_interval_minutes: 15
+    plugins:
+      resurrect:
+        repository: "https://github.com/tmux-plugins/tmux-resurrect.git"
+        revision: "cff343cf9e81983d3da0c8562b01616f12e8d548"
+      continuum:
+        repository: "https://github.com/tmux-plugins/tmux-continuum.git"
+        revision: "0698e8f4b17d6454c71bf5212895ec055c578da0"
+
 user:
   name: "yolowingpixie"
   uid: 1001
@@ -49,6 +61,7 @@ apt_packages:
   - ripgrep
   - software-properties-common
   - sudo
+  - tmux
   - unzip
   - vim
   - wget

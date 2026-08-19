@@ -98,6 +98,8 @@ compdef _kubectl k
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
 
+[[ ! -r "$HOME/.config/zsh/workspace.zsh" ]] || source "$HOME/.config/zsh/workspace.zsh"
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment

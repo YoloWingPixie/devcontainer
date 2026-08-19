@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+source /etc/devcontainer/workspace.env
+
+state_root="$HOME/.local/state/$DEVCONTAINER_WORKSPACE_STATE_DIRECTORY"
+directory_log="$state_root/directories.log"
+
+[ -r "$directory_log" ] || exit 0
+
+tac -- "$directory_log" | awk 'length($0) > 0 && !seen[$0]++'
