@@ -8,5 +8,10 @@
 *.bak
 *.orig
 
+# Codex portable configuration only
+addons/codex/*
+!addons/codex/README.md
+!addons/codex/config.toml
+
 #IDEs
 .idea

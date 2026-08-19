@@ -8,6 +8,7 @@ WORKDIR /home/$USERNAME
 
 ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
 
+COPY --chown=$USERNAME:$USERNAME addons/ /tmp/addons/
 COPY --chmod=755 scripts/install/user/ /tmp/install/user/
 RUN run-parts --regex '.*\.sh$' /tmp/install/user/
 
