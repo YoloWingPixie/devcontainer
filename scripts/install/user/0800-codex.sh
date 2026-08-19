@@ -20,4 +20,3 @@ rm -f "$CODEX_INSTALLER"
 
 install -d -m 0700 "$CODEX_CONFIG_DIR"
 install -m 0600 "$CODEX_CONFIG_SOURCE/config.toml" "$CODEX_CONFIG_DIR/config.toml"
-install -m 0600 "$CODEX_CONFIG_SOURCE/AGENTS.md" "$CODEX_CONFIG_DIR/AGENTS.md"

@@ -1,14 +1,14 @@
 # Codex add-on
 
-This add-on installs a pinned Codex CLI release and portable user configuration in the development container.
+This add-on installs a pinned Codex CLI release and portable non-personal configuration in the development container.
 
 Included configuration:
 
 - `config.toml`: model, reasoning, documentation, web search, personality, and agent defaults.
-- `AGENTS.md`: global personal development instructions.
 
 Excluded local state:
 
+- Personal global instructions, prompts, and authored skills.
 - Authentication and credential files.
 - Project trust records and machine-specific paths.
 - Histories, sessions, memories, attachments, logs, databases, caches, and shell snapshots.

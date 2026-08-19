@@ -10,7 +10,6 @@
 
 # Codex portable configuration only
 addons/codex/*
-!addons/codex/AGENTS.md
 !addons/codex/README.md
 !addons/codex/config.toml
 
